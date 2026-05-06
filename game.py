@@ -359,3 +359,97 @@ def endGameCheck(): #check if the game has finished/ended
         print("Wow, It's a Draw")
         finished = True
 
+# ========================================================================================================================
+# Initialize the game by calling the classes
+game_board = GameBoard()
+robot = Robot()
+record = queue.Queue()
+
+# Making a variable "finished"
+finished = False
+os.system("clear")
+infinimode = opening.screen() #running the opening screen and customizing the infinite mode
+
+playAgain = "yes"
+while playAgain.lower() == "yes": #Loop if user wants to play again
+    while(not finished): #Main loop of the game
+        os.system("clear")
+        game_board.drawBoard()
+        #print("|1|2|3|4|\n|q|w|e|r|\n|a|s|d|f|\n|z|x|c|v|")
+        # Get player's move
+        in_a = input("Input the corresponding index: ")
+        while in_a not in ["1", "2", "3", "4", 'q', 'w', 'e', 'r', 'a', 's', 'd', 'f', 'z', 'x', 'c', 'v']: #Catching inputs which are invalid
+            print("Input not in board. Please input a valid position.")
+            in_a = input("Input the corresponding index: ")
+        a_list = [['1','2','3','4'],['q','w','e','r'],['a','s','d','f'],['z','x','c','v']]
+        a = []
+
+        # Map input to coordinates
+        for i, row in enumerate(a_list):
+            for j, element in enumerate(row):
+                if element == in_a:
+                    a = [j,i]
+        # Place the player's piece
+        while(not game_board.nextMove(copy.copy(a))):
+            in_a = input("Input the corresponding index(please put chess piece to empty spaces): ")
+            for i, row in enumerate(a_list):
+                for j, element in enumerate(row):
+                    if element == in_a:
+                        a = [j,i]
+        #User's turn
+        record.put(copy.copy(a))
+        os.system("clear")
+        game_board.drawBoard()
+        print("Before Rotation")
+        time.sleep(2)
+        os.system("clear")
+        game_board.rotateBoard() #Calling rotateboard
+        game_board.drawBoard() #Print board
+        print("After Rotation")
+        endGameCheck() #Check if the game is done (finished true or not)
+        if(finished==True):
+            break
+        
+        # Check if a random piece needs to be removed
+        if(game_board.blank()<infinimode): #If the number of blanks are less than the mode
+            game_board.randomRemove() #Removing random piece
+            print("Randomly removing 1 chess piece")
+            time.sleep(2.5)
+            os.system("clear")
+            game_board.drawBoard()
+        
+        # Robot's turn
+        print("Robot is thinking")
+        a=robot.getNextStep(copy.copy(game_board))
+        percentage = 0
+        record.put(copy.copy(a))
+        os.system("clear")
+        game_board.nextMove(copy.copy(a))
+        game_board.drawBoard()
+        print("Before Rotation")
+        time.sleep(2)
+        os.system("clear")
+        game_board.rotateBoard()
+        game_board.drawBoard()
+        print("After Rotation")
+        endGameCheck()
+        if(finished==True):
+            break
+        time.sleep(1)
+        
+        # Check if a random piece needs to be removed
+        if(game_board.blank()<infinimode):
+            os.system("clear")
+            print("Randomly removing 1 piece...")
+            game_board.randomRemove()
+            game_board.drawBoard()
+            time.sleep(1)
+    
+    # Ask if the player wants to play again
+    playAgain = input("Do you want to play again? (Yes/No): ")
+    if playAgain.lower() == "yes":
+        infinimode = opening.screen()
+        game_board = GameBoard() #Restarting the board
+        finished = False #Changing finished value from True to False
+
+print("Thanks For Playing!")
