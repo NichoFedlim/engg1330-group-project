@@ -3,21 +3,21 @@ ENGG1330 Group Project - Twist Tac Four Game
 
 ***** Game Title: Twist Tac Four *****
 
-1. Description
+1. Description <br>
 Twist Tac Four is a strategic board game that challenges problem-solving skills of a player to outmaneuver an AI opponent. 
 The game features a unique rotating board mechanism, adding a dynamic twist to traditional gameplay. 
-This added layer of complexity makes the game both challenging and engaging for players of all ages.
+This added layer of complexity makes the game both challenging and engaging for players of all ages. <br>
 Players take turns placing their pieces on a 4x4 grid, aiming to align four pieces in a row. 
 The board's outer and inner rings will always be rotated to disrupt opponents' strategies and create new opportunities.
 
-2. Key Features
+2. Key Features <br>
 The game's AI, powered by a sophisticated algorithm, predicts player moves and calculates the best possible counteractions. 
 The AI employs a game tree structure, evaluating moves with preserving and aggressive strategies to ensure optimal play.
 - Dynamic Rotating Board: Rotate sections of the board to gain an advantage or thwart opponents.
 - Advanced AI Opponent: Utilizing a tree-based prediction system, the AI (Robot) adaptively counters player strategies.
 - Challenging Gameplay: Balancing offensive and defensive tactics to achieve victory.
 
-3. Objective
+3. Objective <br>
 The primary goal of Twist Tac Four is to align four of your pieces (either X or O) in a row, column, or diagonal on a 4x4 grid (After the Rotation). 
 The game can be played with one player against a computer-controlled opponent (The Robot).
 
@@ -49,25 +49,25 @@ The game can be played with one player against a computer-controlled opponent (T
 - Rotation: The rotation mechanism adds a strategic element to the game. Player must think ahead not only about where to place their pieces but also how rotating the board will affect the game state.
 - Prediction: The Robot uses a game tree to foresee possible moves and outcomes, ensuring it makes optimal decisions.
 
-7. Simplified Summary of the Logic of the Code
+7. Simplified Summary of the Logic of the Code <br>
 The main program consists of three key components: GameBoard, Robot, and Tree. 
 The GameBoard manages the game state, including the positions of chess pieces and whose turn it is. 
-It has methods to rotate the board, display it, determine whose turn, check for available spaces, and identify winning patterns. 
-The Robot acts as the AI player, using the Tree to predict possible moves. 
-The Tree generates a game tree based on the current board state, assigning values to each node to determine the best move. 
+It has methods to rotate the board, display it, determine whose turn, check for available spaces, and identify winning patterns. <br>
+The Robot acts as the AI player, using the Tree to predict possible moves. <br>
+The Tree generates a game tree based on the current board state, assigning values to each node to determine the best move. <br>
 It considers both conservative and aggressive strategies to predict future moves up to four steps ahead. 
 The game mechanics include a rotation mechanism that affects piece positions and a winning mechanism that checks for patterns to determine the winner. 
 The Robot uses these predictions to make the best possible move, ensuring a challenging game for the player.
 
-8. Strategy Tips
+9. Strategy Tips
 - Plan Ahead: Consider both your moves and potential rotations to maximize your chances of winning.
 - Block Opponents: Always be aware of your opponent's potential to align four pieces and block their moves.
 - Use Rotations Wisely: Rotating the board can disrupt your opponent's strategy and create new opportunities for you.
 
-Twist Tac Four is a game of skill, strategy, and foresight. 
+Twist Tac Four is a game of skill, strategy, and foresight. <br>
 It offers an engaging experience that combines elements of classic board games with modern AI technology, providing endless strategic possibilities.
 Whether playing against a friend or the computer, it offers a dynamic and challenging experience that keeps player engaged and entertained. 
 Enjoy the game and may the best strategist win! 
 
-#Demo Video: https://youtu.be/XhFQoipspb8
+#Demo Video: https://youtu.be/XhFQoipspb8 <br>
 #Trailer Video: https://youtu.be/yIUieJZs9JE
