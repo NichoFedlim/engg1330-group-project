@@ -188,3 +188,174 @@ class GameBoard: # Class representing the game board
                 a = False #Stopping the loop
         return
 
+# =========================================================================================
+class Robot:
+    def __init__(self):
+        self.game_tree = Tree() #Initialize the robot's decision tree
+
+    def getNextStep(self,board): # Get the next move from the decision tree
+        return self.game_tree.getNextStep(board,copy.copy(total_step)).position
+
+# =========================================================================================
+percentage = 0 # Helper variable for tracking progress of the robot
+class Tree: # Tree class for managing the decision-making process
+    def __init__(self):
+
+        self.preserving_value = 0
+        self.aggressive_value = 0
+        self.position = []
+    
+    def buildTree(self,board,step,position="NA"): # Build the tree for the robot's decision-making
+        global total_step
+        son = []
+        stage = board.checkWin()
+        self.position = position
+        
+        # Progress calculation for loading
+        global percentage
+        global game_board
+        percentage +=1
+        base = 1
+        blank = game_board.blank()
+        for i in range(total_step): #Counting the steps to make the progress bar
+            base = base*blank
+            blank-=1
+            if blank == 0:
+                break # Prevents base from becoming zero
+        if base != 0:
+            loading_percentage = int(percentage / base * 100)
+            if loading_percentage > 100:
+                loading_percentage = 100  # Cap the percentage at 100%
+            print(f"loading: {loading_percentage}%", end='\r')
+        else:
+            print("Error: Division by zero", end='\r')
+        #Game results for every possible moves (0 for nothing, 1 if player has the advantage, -1 if robot does)
+        if(stage == "Draw"):
+            self.preserving_value = self.aggressive_value = 0
+        elif(stage == "0"):
+            self.preserving_value = self.aggressive_value = 1
+        elif(stage == "X"):
+            self.preserving_value = self.aggressive_value = -1
+        else: #Explore possible moves
+            for i in range(4):
+                for j in range(4):
+                    temp_board = copy.deepcopy(board)
+                    if(temp_board.gameBoard[i][j]==" " and step != 0):
+
+                        temp_board.nextMove([j,i])
+                        temp_board.rotateBoard()
+                        temp_tree = Tree()
+                        temp_tree.buildTree(copy.deepcopy(temp_board),copy.copy(step)-1,[copy.copy(j),copy.copy(i)])
+                        son.append(temp_tree)
+                        #self.board.gameBoard[i][j]==" "
+        
+        # Progress calculation for loading
+        self.SetPreservingValue(step,son,board)
+        self.SetAggressiveValue(step,son,board)
+
+        if(board.gameBoard == [[' ',' ',' ','X'],[' ','0',' ','X'],[' ',' ','0','X'],[' ','0','0','X']]):
+            print(self.aggressive_value,self.preserving_value)
+            input()
+        #print("bottom")
+        return son
+
+    def getNextStep(self,board,step,position="NA"): # Get the best next step from the decision tree
+        return self.findGreatestValue(step,self.buildTree(board,step,position),board)
+    def whoseTurn(self,board): # Check whose turn it is based on the board state
+        o = 0
+        x = 0
+        for i in range(4):
+            for j in range(4):
+                if(board.gameBoard[j][i]=='X'):
+                    x+=1
+                elif(board.gameBoard[j][i]=='0'):
+                    o+=1
+        if(o==x):
+            return '0'
+        else:
+            return 'X'
+    # Find the best move based on the decision tree's values
+    def findGreatestValue(self,step,son,board):
+        #preserving value
+        global total_step
+        possible_choice = []
+        best_choice = []
+        # Find the move with the best preserving value
+        if(self.whoseTurn(board)=='0'):
+            max_min = son[0].preserving_value
+            for i in range(len(son)):
+                if(max_min<son[i].preserving_value):
+                    max_min = son[i].preserving_value
+        else:
+            max_min = son[0].preserving_value
+            for i in range(len(son)):
+                if(max_min>son[i].preserving_value):
+                    max_min = son[i].preserving_value
+        for i in range(len(son)):
+            if(son[i].preserving_value==max_min):
+                possible_choice.append(copy.copy(son[i]))
+        # Find the move with the best aggressive value
+        max_min = possible_choice[0].aggressive_value
+        for i in range(len(possible_choice)):
+            if((total_step-step)%2==0):
+                if(max_min<possible_choice[i].aggressive_value):
+                    max_min = possible_choice[i].aggressive_value
+            else:
+                if(max_min>possible_choice[i].aggressive_value):
+                    max_min = possible_choice[i].aggressive_value
+        for i in range(len(possible_choice)):
+            if(max_min==possible_choice[i].aggressive_value):
+                best_choice.append(possible_choice[i])
+        # Randomly pick one of the best choices
+        return best_choice[random.randint(0,len(best_choice)-1)]
+
+    # Set the preserving value for this node in the tree
+    def SetPreservingValue(self,step,son,board):
+        #print("to bottom of tree")
+        if(board.blank()==14):
+            if(board.gameBoard[1][1]=="X" or board.gameBoard[2][1]=="X" or board.gameBoard[1][2]=="X" or board.gameBoard[2][2]=="X"):
+                self.preserving_value = -0.5
+                return
+        if(step==0):
+            self.preserving_value = board.checkReadyToWin()
+            return
+        if(len(son)==0):
+            return
+        if(self.whoseTurn(board)=="0"):
+            #print(son,step)
+            max_min=son[0].preserving_value
+            for i in range(len(son)):
+                if(max_min<son[i].preserving_value):
+                    max_min = son[i].preserving_value
+        else:
+            max_min=son[0].preserving_value
+            for i in range(len(son)):
+                if(max_min>son[i].preserving_value):
+                    max_min = son[i].preserving_value
+        self.preserving_value = copy.copy(max_min)
+
+    # Set the aggressive value for this node in the tree
+    def SetAggressiveValue(self,step,son,board):
+        if(step==0):
+            self.aggressive_value = board.checkReadyToWin()
+            return
+        for i in range(len(son)):
+            self.aggressive_value += son[i].aggressive_value
+
+def sleep(): # Sleep function placeholder
+    print("sleep")
+def endGameCheck(): #check if the game has finished/ended
+    global finished
+    if(game_board.checkWin()=="0"): #If player wins
+        print("You Win!!! Congratulations")
+        game_board.drawBoard()
+        finished = True
+    elif(game_board.checkWin()=="NotYet"): #When theres no 4 in a row yet
+        print("Next Turn")
+    elif(game_board.checkWin()=="X"):
+        print("You Lose, better luck next time.") #If "X" wins i.e. the robot
+        finished = True
+    elif(game_board.checkWin()=="Draw"): #If board is full or 2 lines are made at the same time
+        print("Wow, It's a Draw")
+        finished = True
+
