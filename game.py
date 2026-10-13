@@ -220,10 +220,11 @@ class Tree: # Tree class for managing the decision-making process
         
         # Progress calculation for loading
         global percentage
-        global game_board
+        # global game_board
         percentage +=1
         base = 1
-        blank = game_board.blank()
+        # blank = game_board.blank()
+        blank = board.blank()
         for i in range(total_step): #Counting the steps to make the progress bar
             base = base*blank
             blank-=1
