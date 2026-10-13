@@ -2,8 +2,12 @@ import os
 import time
 import sys
 
+
 def clear_screen():
-    os.system('clear')
+    if os.environ.get("TERM") is None:
+        return
+    command = 'cls' if os.name == 'nt' else 'clear'
+    os.system(f'{command} >/dev/null 2>&1')
 
 def loading_animation():
     animation = "|/-\\"
@@ -41,7 +45,7 @@ def display_menu(queue):
     print("\033[1;36m")
 
 def handle_menu_choice(choice):
-    os.system("clear")
+    clear_screen()
     if choice == "1":
         loading_animation()  # Show loading animation after Play Game is selected
         print("\n\033[1;32mGame is starting!\033[0m")
