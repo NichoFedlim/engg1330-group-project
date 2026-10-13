@@ -1,7 +1,9 @@
 # ENGG1330 Group Project
 ENGG1330 Group Project - Twist Tac Four Game
 
-***** Game Title: Twist Tac Four *****
+[Click Here for Public Demo](https://engg1330-project--twist-tac-four.streamlit.app/)
+
+----- **Game Title: Twist Tac Four** -----
 
 1. Description <br>
 Twist Tac Four is a strategic board game that challenges problem-solving skills of a player to outmaneuver an AI opponent. 
