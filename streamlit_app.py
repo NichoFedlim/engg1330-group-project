@@ -33,6 +33,9 @@ def init_state():
         st.session_state.winner = None
         st.session_state.robot_thinking = False
         st.session_state.last_removed = None
+    
+    if "last_move" not in st.session_state:
+        st.session_state.last_move = ""
 
 
 init_state()
@@ -45,7 +48,12 @@ def render_board(board, disabled=False):
         cols = st.columns(4)
         for j in range(4):
             cell = board.gameBoard[i][j]
-            label = cell if cell != EMPTY_CELL else KEY_MAP[i][j]
+            if cell == ROBOT_MARKER:
+                label = "❌"
+            elif cell == PLAYER_MARKER:
+                label = "🔵"
+            else:
+                label = KEY_MAP[i][j]
             key = f"cell_{i}_{j}"
             # Disable if the cell is occupied or game finished
             is_disabled = disabled or cell != EMPTY_CELL
@@ -63,7 +71,8 @@ def handle_player_move(row, col):
 
     # Player move
     board.nextMove([col, row])
-    board.rotateBoard()
+    board.rotateBoard()    
+    st.session_state.last_move = f"You played ({row+1},{col+1}). Board rotated."
 
     # Check end
     result = board.checkWin()
@@ -86,9 +95,13 @@ def robot_move():
     board = st.session_state.game_board
     robot = st.session_state.robot
 
-    move = robot.getNextStep(copy.copy(board))
+    with st.spinner("🤖 Robot is thinking..."):
+        move = robot.getNextStep(copy.copy(board))
+
+    # move = robot.getNextStep(copy.copy(board))
     board.nextMove(copy.copy(move))
     board.rotateBoard()
+    st.session_state.last_move = f"Robot played ({move[1]+1},{move[0]+1}). Board rotated."
 
     result = board.checkWin()
     if result != "NotYet":
@@ -171,6 +184,10 @@ else:
     st.subheader(st.session_state.message)
     if st.session_state.last_removed:
         st.warning(st.session_state.last_removed)
+
+    # NEW: show last move + rotation info
+    if "last_move" in st.session_state and st.session_state.last_move:
+        st.caption(st.session_state.last_move)
 
     render_board(st.session_state.game_board, disabled=st.session_state.finished)
 
